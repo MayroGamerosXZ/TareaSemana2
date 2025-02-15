@@ -5,6 +5,7 @@ from typing import List, Dict
 import timeit
 
 
+# Definición de la clase base para almacenar usuarios
 class Usuario:
     def __init__(self, id: int, nombre: str, edad: int):
         self.id = id
@@ -12,13 +13,12 @@ class Usuario:
         self.edad = edad
 
 
+# Funciones de generación de datos
 def generar_nombre_aleatorio(longitud: int = 8) -> str:
-    """Genera un nombre aleatorio de la longitud especificada"""
     return ''.join(random.choices(string.ascii_lowercase, k=longitud)).capitalize()
 
 
 def generar_usuarios(cantidad: int) -> List[Usuario]:
-    """Genera una lista de usuarios con datos aleatorios"""
     usuarios = []
     for i in range(cantidad):
         nombre = generar_nombre_aleatorio()
@@ -27,8 +27,12 @@ def generar_usuarios(cantidad: int) -> List[Usuario]:
     return usuarios
 
 
+# Algoritmos de búsqueda
 def busqueda_lineal(usuarios: List[Usuario], id_buscado: int) -> Usuario:
-    """Implementa búsqueda lineal para encontrar un usuario por ID"""
+
+    #Búsqueda simple: revisa cada usuario uno por uno
+       #Complejidad: O(n) - donde n es el número de usuarios """
+
     for usuario in usuarios:
         if usuario.id == id_buscado:
             return usuario
@@ -36,7 +40,12 @@ def busqueda_lineal(usuarios: List[Usuario], id_buscado: int) -> Usuario:
 
 
 def busqueda_binaria(usuarios: List[Usuario], id_buscado: int) -> Usuario:
-    """Implementa búsqueda binaria para encontrar un usuario por ID"""
+
+
+    #Búsqueda optimizada: divide la lista en mitades
+    #Complejidad: O(log n) - donde n es el número de usuarios
+    # Se Requiere que los usuarios estén ordenados por ID
+
     izquierda, derecha = 0, len(usuarios) - 1
 
     while izquierda <= derecha:
@@ -50,8 +59,11 @@ def busqueda_binaria(usuarios: List[Usuario], id_buscado: int) -> Usuario:
     return None
 
 
+# Función para medir el rendimiento
 def medir_tiempo_busqueda(usuarios: List[Usuario], id_buscado: int, funcion_busqueda, numero_pruebas: int = 1000):
-    """Mide el tiempo de ejecución de una función de búsqueda"""
+    """
+    Mide el tiempo promedio de ejecución realizando múltiples pruebas
+    """
     tiempo = timeit.timeit(
         lambda: funcion_busqueda(usuarios, id_buscado),
         number=numero_pruebas
@@ -59,24 +71,31 @@ def medir_tiempo_busqueda(usuarios: List[Usuario], id_buscado: int, funcion_busq
     return tiempo / numero_pruebas
 
 
+# Programa principal
 def main():
-    # Generar usuarios
+    # Configuración inicial
+    TOTAL_USUARIOS = 100000
+    ID_BUSCAR = 99999  # Caso más desfavorable para búsqueda lineal
+
+    # Generación de datos de prueba
     print("Generando usuarios...")
-    usuarios = generar_usuarios(100000)
+    usuarios = generar_usuarios(TOTAL_USUARIOS)
     print(f"Se generaron {len(usuarios)} usuarios")
 
-    # ID a buscar (ejemplo: último usuario)
-    id_buscar = 99999
+    # Ejecución de pruebas de rendimiento
+    tiempo_lineal = medir_tiempo_busqueda(usuarios, ID_BUSCAR, busqueda_lineal)
+    tiempo_binario = medir_tiempo_busqueda(usuarios, ID_BUSCAR, busqueda_binaria)
 
-    # Medir tiempos de búsqueda
-    tiempo_lineal = medir_tiempo_busqueda(usuarios, id_buscar, busqueda_lineal)
-    tiempo_binario = medir_tiempo_busqueda(usuarios, id_buscar, busqueda_binaria)
+    # Presentación de resultados
+    print(f"\nTiempos de búsqueda promedio para ID {ID_BUSCAR}:")
+    print(f"Búsqueda lineal: {tiempo_lineal:.6f} segundos")
+    print(f"Búsqueda binaria: {tiempo_binario:.6f} segundos")
+    print(f"La búsqueda binaria es {tiempo_lineal / tiempo_binario:.2f} veces más rápida")
 
-    # Mostrar resultados
-    print(f"\nTiempos de búsqueda promedio para ID {id_buscar}:")
-    print(f"Búsqueda lineal Realizada: {tiempo_lineal:.6f} segundos")
-    print(f"Búsqueda binaria Realizada: {tiempo_binario:.6f} segundos")
-    print(f"La búsqueda binaria es {tiempo_lineal / tiempo_binario:.2f} veces más veloz")
+    for _ in range(5):
+        print()
+    print(f"Gracias por utilizar este proceso de Busqueda y Moduralizacion")
+
 
 
 if __name__ == "__main__":
